@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  spark-master:
+    image: apache/spark:latest
+    container_name: spark-master
+    command: >
+      /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+      -h spark-master
+    hostname: spark-master
+    environment:
+      SPARK_MASTER_HOST: spark-master
+      SPARK_LOCAL_IP: spark-master
+    ports:
+      - "8070:8080"   # Master web UI
+      - "7077:7077"   # Master communication port
+      - "4040:4040"   # Application UI
+    volumes:
+      - /mnt/sda_04/doc_file:/opt/spark/work-dir
+    networks:
+      - spark-network
+
+  spark-worker:
+    image: apache/spark:latest
+    depends_on:
+      - spark-master
+    command: >
+      /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
+      spark://spark-master:7077
+    environment:
+      SPARK_WORKER_CORES: 1
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_LOCAL_IP: spark-worker
+    volumes:
+      - /mnt/sda_04/doc_file:/opt/spark/work-dir
+    networks:
+      - spark-network
+    # Scale workers using:
+    # docker-compose up -d --scale spark-worker=3
+
+networks:
+  spark-network:
+    driver: bridge

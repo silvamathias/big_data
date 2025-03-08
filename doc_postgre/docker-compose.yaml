@@ -1,0 +1,28 @@
+#    container_name: postgre_v1
+#    environment:
+#      POSTGRES_PASSWORD: 123456
+#      POSTGRES_USER: phelipe
+#      POSTGRES_INITDB_ARGS: teste_01
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: postgre_v1
+    environment:
+#      POSTGRES_USER: phelipe
+      POSTGRES_INITDB_ARGS: teste_01
+      POSTGRES_PASSWORD: teste
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432/tcp"
+
+  adminer:
+    image: adminer
+    container_name: adminer_v1
+    restart: always
+    ports:
+      - 8050:8080
+
+volumes:
+  pg_data:

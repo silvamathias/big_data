@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  spark-master:
+    image: bitnami/spark:latest
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+
+    volumes:
+      - type: bind
+        source: /mnt/sda_04/doc_file/
+        target: /mnt
+
+    ports:
+      - "8070:8080"
+      - "7077:7077"
+    restart: always
+
+  spark-worker-1:
+    image: bitnami/spark:latest
+    container_name: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1g
+
+    volumes:
+      - type: bind
+        source: /mnt/sda_04/doc_file/
+        target: /mnt
+
+    depends_on:
+      - spark-master
+    ports:
+      - "8071:8081"
+    restart: always
+
+#  spark-worker-2:
+#    image: bitnami/spark:latest
+#    container_name: spark-worker-2
+#    environment:
+#      - SPARK_MODE=worker
+#      - SPARK_MASTER_URL=spark://spark-master:7077
+#      - SPARK_WORKER_CORES=1
+#      - SPARK_WORKER_MEMORY=1g
+
+#    depends_on:
+#      - spark-master
+#    ports:
+#      - "8072:8082"
+#    restart: always
+
+#  spark-worker-3:
+#    image: bitnami/spark:latest
+#    container_name: spark-worker-3
+#    environment:
+#      - SPARK_MODE=worker
+#      - SPARK_MASTER_URL=spark://spark-master:7077
+#      - SPARK_WORKER_CORES=1
+#      - SPARK_WORKER_MEMORY=1g
+
+#    depends_on:
+#      - spark-master
+#    ports:
+#      - "8073:8083"
+#    restart: always

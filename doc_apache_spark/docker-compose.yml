@@ -1,0 +1,14 @@
+services:
+  spark:
+    image: spark:python3
+    container_name: spark_v1
+    command: /opt/spark/bin/pyspark
+#    volumes:
+#      - type: bind
+#        source: /mnt/sda_04/doc_file
+#        target: /mnt
+
+#    ports:
+#      - "8070:8080"
+#      - "7077:7077"
+    restart: always
