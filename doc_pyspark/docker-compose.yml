@@ -16,7 +16,12 @@ services:
       - "7077:7077"   # Master communication port
       - "4040:4040"   # Application UI
     volumes:
-      - /mnt/sda_04/doc_file:/opt/spark/work-dir
+      #- /mnt/sda_04/doc_file:/opt/spark/work-dir
+      - /mnt/sda_04/doc_config_file/spark:/opt/spark/work-dir 
+      - type: bind
+        source: /mnt/sda_04/doc_file
+        target: /mnt
+
     networks:
       - spark-network
 
@@ -32,7 +37,11 @@ services:
       SPARK_WORKER_MEMORY: 1g
       SPARK_LOCAL_IP: spark-worker
     volumes:
-      - /mnt/sda_04/doc_file:/opt/spark/work-dir
+      #- /mnt/sda_04/doc_file:/opt/spark/work-dir
+      - /mnt/sda_04/doc_config_file/spark:/opt/spark/work-dir 
+      - type: bind
+        source: /mnt/sda_04/doc_file
+        target: /mnt
     networks:
       - spark-network
     # Scale workers using:
