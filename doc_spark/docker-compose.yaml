@@ -9,10 +9,10 @@ services:
 
     volumes:
       #- /mnt/sda_04/doc_file:/opt/spark/work-dir
-      - /mnt/sda_04/doc_config_file/spark:/opt/spark/work-dir 
+      #- /mnt/sda_04/doc_config_file/spark:/opt/spark/work-dir 
       - type: bind
         source: /mnt/sdb_04/doc_file
-        target: /mnt
+        target: /opt/spark/work-dir
 
     ports:
       - "8070:8080"
@@ -30,10 +30,10 @@ services:
 
     volumes:
       #- /mnt/sda_04/doc_file:/opt/spark/work-dir
-      - /mnt/sdb_04/doc_config_file/spark:/opt/spark/work-dir 
+      #- /mnt/sdb_04/doc_config_file/spark:/opt/spark/work-dir 
       - type: bind
         source: /mnt/sdb_04/doc_file
-        target: /mnt
+        target: /opt/spark/work-dir
 
     depends_on:
       - spark-master
