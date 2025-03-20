@@ -2,51 +2,34 @@ version: '3.8'
 
 services:
   spark-master:
-    image: apache/spark:latest
+    image: bitnami/spark:latest
     container_name: spark-master
-    command: >
-      /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
-      -h spark-master
-    hostname: spark-master
     environment:
-      SPARK_MASTER_HOST: spark-master
-      SPARK_LOCAL_IP: spark-master
+      - SPARK_MODE=master
     ports:
-      - "8070:8080"   # Master web UI
-      - "7077:7077"   # Master communication port
-      - "4040:4040"   # Application UI
+      - "8070:8080"  # Spark Master UI
+      - "7077:7077"  # Spark Master port
     volumes:
-      #- /mnt/sda_04/doc_file:/opt/spark/work-dir
-      - /mnt/sda_04/doc_config_file/spark:/opt/spark/work-dir 
+      #- ./data:/data  # Volume para dados compartilhados
       - type: bind
         source: /mnt/sdb_04/doc_file
         target: /mnt
 
-    networks:
-      - spark-network
-
   spark-worker:
-    image: apache/spark:latest
+    image: bitnami/spark:latest
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+        SPARK_WORKER_CORES: 1
+        SPARK_WORKER_MEMORY: 2g
+
     depends_on:
       - spark-master
-    command: >
-      /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker
-      spark://spark-master:7077
-    environment:
-      SPARK_WORKER_CORES: 1
-      SPARK_WORKER_MEMORY: 1g
-      SPARK_LOCAL_IP: spark-worker
+    ports:
+      - "8071:8081"  # Spark Worker UI
     volumes:
-      #- /mnt/sda_04/doc_file:/opt/spark/work-dir
-      - /mnt/sda_04/doc_config_file/spark:/opt/spark/work-dir 
+      #- ./data:/data  # Volume para dados compartilhados
       - type: bind
-        source: /mnt/sda_04/doc_file
+        source: /mnt/sdb_04/doc_file
         target: /mnt
-    networks:
-      - spark-network
-    # Scale workers using:
-    # docker-compose up -d --scale spark-worker=3
-
-networks:
-  spark-network:
-    driver: bridge
